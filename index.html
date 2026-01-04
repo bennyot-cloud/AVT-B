@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Upgrade Business Case Calculator</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#101b33;
+      --muted:#9aa4b2;
+      --text:#eef2ff;
+      --line:#24314f;
+      --good:#34d399;
+      --bad:#fb7185;
+      --warn:#fbbf24;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(900px 500px at 70% 0%, #1b2b5a 0%, var(--bg) 62%);
+      color:var(--text);
+    }
+    .wrap{max-width:1050px;margin:0 auto;padding:22px}
+    h1{margin:0 0 6px;font-size:24px}
+    .sub{margin:0 0 18px;color:var(--muted);line-height:1.45}
+    .grid{display:grid;grid-template-columns:1.05fr 0.95fr;gap:14px;align-items:start}
+    @media (max-width: 900px){ .grid{grid-template-columns:1fr} }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      border:1px solid rgba(255,255,255,0.09);
+      border-radius:18px;
+      padding:14px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.28);
+    }
+    .topRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 10px;border-radius:999px;
+      background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.08);
+      color:#e5e7eb;font-size:12px
+    }
+    h2{margin:0 0 10px;font-size:16px;color:#dbeafe}
+    .field{padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06)}
+    .field:last-child{border-bottom:none}
+    label{display:block;font-size:13px;color:#dbeafe;margin-bottom:8px}
+    .row{display:flex;gap:10px;align-items:center}
+    input[type="number"], select, textarea{
+      width:100%;
+      background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.10);
+      color:var(--text);
+      border-radius:12px;
+      padding:10px 12px;
+      font-size:14px;
+      outline:none;
+    }
+    input[type="range"]{width:100%}
+    .hint{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.35}
+    .kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+    .kpi{
+      padding:12px;border-radius:16px;
+      border:1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.04);
+    }
+    .kpi .t{font-size:12px;color:var(--muted);margin-bottom:6px}
+    .kpi .v{font-size:20px;font-weight:850;letter-spacing:0.2px}
+    .good{color:var(--good)}
+    .bad{color:var(--bad)}
+    .warn{color:var(--warn)}
+    .bigLine{
+      margin-top:10px;
+      padding:12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,0.10);
+      background: rgba(52,211,153,0.10);
+      line-height:1.45;
+    }
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    button{
+      border:none;border-radius:14px;
+      padding:12px 14px;
+      font-weight:750;
+      cursor:pointer;
+      color:#071018;
+      background: linear-gradient(135deg, var(--good), #60a5fa);
+    }
+    button.secondary{
+      color:var(--text);
+      background: rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.10);
+      font-weight:650;
+    }
+    .mini{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.45}
+    .tog{display:flex;align-items:center;gap:10px}
+    .tog input{transform:scale(1.1)}
+    textarea{min-height:140px;resize:vertical;line-height:1.45}
+    .dividerTitle{
+      display:flex;justify-content:space-between;align-items:center;
+      margin:10px 0 6px;padding-top:10px;border-top:1px dashed rgba(255,255,255,0.12);
+      color:#dbeafe;font-size:13px
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Upgrade Business Case (Service-Triggered ROI)</h1>
+    <p class="sub">
+      This calculator uses your actual service reality and operational waste to quantify the annual cost of staying with the old system,
+      then compares it to the annual cost of upgrading. Minimal inputs. CFO-friendly outputs.
+    </p>
+
+    <div class="grid">
+      <!-- Inputs -->
+      <div class="card">
+        <div class="topRow">
+          <span class="pill">Mode: <b id="modeLabel">Expected</b></span>
+          <span class="pill">Currency:
+            <select id="currency" style="width:auto;padding:8px 10px">
+              <option value="$">$</option>
+              <option value="€">€</option>
+              <option value="₪">₪</option>
+            </select>
+          </span>
+          <span class="pill">Horizon:
+            <select id="years" style="width:auto;padding:8px 10px">
+              <option value="3">3 years</option>
+              <option value="5">5 years</option>
+            </select>
+          </span>
+        </div>
+
+        <h2>Inputs</h2>
+
+        <div class="field">
+          <label>Mode (Conservative / Expected / Aggressive)</label>
+          <div class="row">
+            <select id="mode">
+              <option value="conservative">Conservative</option>
+              <option value="expected" selected>Expected</option>
+              <option value="aggressive">Aggressive</option>
+            </select>
+          </div>
+          <div class="hint">Mode applies light multipliers to benefits (not to baseline costs) to stay honest.</div>
+        </div>
+
+        <div class="dividerTitle">
+          <span>1) Service reality</span>
+          <span class="pill">Hard data</span>
+        </div>
+
+        <div class="field">
+          <label>Service calls in the last 12 months</label>
+          <div class="row">
+            <input type="range" id="callsR" min="0" max="60" step="1" value="12" />
+            <input type="number" id="calls" min="0" step="1" value="12" />
+          </div>
+          <div class="hint">Use CRM / service logs. This is the anchor input that removes debate.</div>
+        </div>
+
+        <div class="field">
+          <label>Average cost per service event (technician + parts + production impact)</label>
+          <div class="row">
+            <input type="range" id="costEventR" min="0" max="20000" step="50" value="900" />
+            <input type="number" id="costEvent" min="0" step="50" value="900" />
+          </div>
+          <div class="hint">If needed, keep it conservative. Understating still works if call count is high.</div>
+        </div>
+
+        <div class="field">
+          <label>Additional downtime cost per year (outside service calls)</label>
+          <div class="row">
+            <input type="range" id="extraDowntimeR" min="0" max="300000" step="500" value="6000" />
+            <input type="number" id="extraDowntime" min="0" step="500" value="6000" />
+          </div>
+          <div class="hint">Optional. Use only if they agree there is real untracked downtime.</div>
+        </div>
+
+        <div class="dividerTitle">
+          <span>2) Raw material savings (most expensive lever)</span>
+          <span class="pill">Materials</span>
+        </div>
+
+        <div class="field">
+          <label class="tog">
+            <input type="checkbox" id="useMaterials" checked />
+            Include raw material savings
+          </label>
+          <div class="hint">In many print operations, materials are the biggest cost. Even 0.5 percent matters.</div>
+        </div>
+
+        <div class="field" id="materialsBlock">
+          <label>Annual raw material spend (paper, substrates, inks, consumables)</label>
+          <div class="row">
+            <input type="range" id="matSpendR" min="0" max="5000000" step="5000" value="500000" />
+            <input type="number" id="matSpend" min="0" step="1000" value="500000" />
+          </div>
+          <div class="hint">If they do not know, take a conservative estimate from purchasing or finance.</div>
+        </div>
+
+        <div class="field" id="materialsBlock2">
+          <label>Expected material reduction (%)</label>
+          <div class="row">
+            <input type="range" id="matPctR" min="0" max="5" step="0.1" value="0.5" />
+            <input type="number" id="matPct" min="0" step="0.1" value="0.5" />
+          </div>
+          <div class="hint">Keep it modest: 0.3 to 1.0 percent is already powerful.</div>
+        </div>
+
+        <div class="dividerTitle">
+          <span>3) Depreciation (optional)</span>
+          <span class="pill">Accounting</span>
+        </div>
+
+        <div class="field">
+          <label class="tog">
+            <input type="checkbox" id="useDep" />
+            Include current depreciation burden (old system)
+          </label>
+          <div class="hint">Use only if finance cares. This is accounting oriented, not operational.</div>
+        </div>
+
+        <div class="field" id="depBlock" style="display:none">
+          <label>Annual depreciation cost attributed to the old system</label>
+          <div class="row">
+            <input type="range" id="depR" min="0" max="500000" step="1000" value="25000" />
+            <input type="number" id="dep" min="0" step="1000" value="25000" />
+          </div>
+          <div class="hint">If depreciation is already finished, leave this at 0 (or disable).</div>
+        </div>
+
+        <div class="dividerTitle">
+          <span>4) New system cost</span>
+          <span class="pill">Upgrade</span>
+        </div>
+
+        <div class="field">
+          <label>New system annual cost (lease / annualized CAPEX + service)</label>
+          <div class="row">
+            <input type="range" id="newAnnualR" min="0" max="500000" step="500" value="45000" />
+            <input type="number" id="newAnnual" min="0" step="500" value="45000" />
+          </div>
+          <div class="hint">Use annual cost, not total price. Easier comparison. Includes service contract if relevant.</div>
+        </div>
+
+        <div class="actions">
+          <button id="calcBtn">Calculate</button>
+          <button class="secondary" id="resetBtn">Reset</button>
+          <button class="secondary" id="copyBtn">Copy summary</button>
+          <button class="secondary" id="printBtn">Print</button>
+        </div>
+
+        <div class="mini">
+          Sales rule: if the customer cannot feel the loss, they will not buy. Anchor on their service history first.
+        </div>
+      </div>
+
+      <!-- Outputs -->
+      <div class="card">
+        <h2>Results</h2>
+
+        <div class="kpis">
+          <div class="kpi">
+            <div class="t">Annual cost of staying put</div>
+            <div class="v bad" id="annualOld">-</div>
+          </div>
+          <div class="kpi">
+            <div class="t">Annual cost with new system</div>
+            <div class="v warn" id="annualNew">-</div>
+          </div>
+          <div class="kpi">
+            <div class="t">Net annual loss if no upgrade</div>
+            <div class="v bad" id="annualLoss">-</div>
+          </div>
+          <div class="kpi">
+            <div class="t">Payback</div>
+            <div class="v good" id="payback">-</div>
+          </div>
+        </div>
+
+        <div class="bigLine" id="bottomLine">Enter inputs and click Calculate.</div>
+
+        <div style="margin-top:12px">
+          <label style="display:block;margin:0 0 8px;color:#dbeafe;font-size:13px">Customer-ready summary</label>
+          <textarea id="summary" readonly></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const fmt = (n, cur) => {
+      if (!isFinite(n)) return "-";
+      const sign = n < 0 ? "-" : "";
+      const abs = Math.abs(n);
+      return sign + cur + abs.toLocaleString(undefined, { maximumFractionDigits: 0 });
+    };
+
+    const modeMultipliers = {
+      conservative: { benefits: 0.7 },
+      expected:     { benefits: 1.0 },
+      aggressive:   { benefits: 1.2 }
+    };
+
+    const el = (id) => document.getElementById(id);
+
+    const sync = (rangeId, numId) => {
+      const r = el(rangeId), n = el(numId);
+      r.addEventListener("input", () => n.value = r.value);
+      n.addEventListener("input", () => r.value = n.value || 0);
+    };
+
+    // sync sliders
+    sync("callsR","calls");
+    sync("costEventR","costEvent");
+    sync("extraDowntimeR","extraDowntime");
+    sync("matSpendR","matSpend");
+    sync("matPctR","matPct");
+    sync("depR","dep");
+    sync("newAnnualR","newAnnual");
+
+    // mode label
+    el("mode").addEventListener("change", () => {
+      const v = el("mode").value;
+      el("modeLabel").textContent = v[0].toUpperCase() + v.slice(1);
+    });
+
+    // toggle blocks
+    const updateBlocks = () => {
+      const matOn = el("useMaterials").checked;
+      el("materialsBlock").style.display  = matOn ? "block" : "none";
+      el("materialsBlock2").style.display = matOn ? "block" : "none";
+
+      const depOn = el("useDep").checked;
+      el("depBlock").style.display = depOn ? "block" : "none";
+    };
+    el("useMaterials").addEventListener("change", updateBlocks);
+    el("useDep").addEventListener("change", updateBlocks);
+
+    function calculate(){
+      const cur = el("currency").value;
+      const years = parseInt(el("years").value, 10);
+      const mode = el("mode").value;
+      const m = modeMultipliers[mode] || modeMultipliers.expected;
+
+      const calls = Math.max(0, parseFloat(el("calls").value) || 0);
+      const costEvent = Math.max(0, parseFloat(el("costEvent").value) || 0);
+      const extraDowntime = Math.max(0, parseFloat(el("extraDowntime").value) || 0);
+
+      const matOn = el("useMaterials").checked;
+      const matSpend = matOn ? Math.max(0, parseFloat(el("matSpend").value) || 0) : 0;
+      const matPct = matOn ? Math.max(0, parseFloat(el("matPct").value) || 0) : 0;
+
+      const depOn = el("useDep").checked;
+      const dep = depOn ? Math.max(0, parseFloat(el("dep").value) || 0) : 0;
+
+      const newAnnual = Math.max(0, parseFloat(el("newAnnual").value) || 0);
+
+      // Old system annual cost
+      const annualServiceCost = calls * costEvent;
+      const annualOld = annualServiceCost + extraDowntime + dep;
+
+      // Benefits from upgrade (annual)
+      // Material savings is a benefit. Keep it modest and mode-adjusted.
+      const annualMaterialSavings = matOn ? (matSpend * (matPct / 100)) * m.benefits : 0;
+
+      // You can add more benefits later without changing the core model.
+      const annualBenefits = annualMaterialSavings;
+
+      // New system annual net cost = annual cost - benefits
+      const annualNewNet = Math.max(0, newAnnual - annualBenefits);
+
+      // Net annual loss if staying = old - newNet
+      const annualLoss = annualOld - annualNewNet;
+
+      // Payback estimate:
+      // We do not ask for total price here. Minimal version assumes "annual frame".
+      // Payback is expressed in months to recover the annual delta relative to annual new cost.
+      // If customer wants classic payback vs purchase price, add "Total price" later.
+      let paybackTxt = "N/A";
+      const monthlyLoss = annualLoss / 12;
+
+      if (annualLoss > 0 && newAnnual > 0){
+        // simple payback proxy: how many months of "loss avoided" equals one year of new system cost
+        const months = (newAnnual / annualLoss) * 12;
+        paybackTxt = isFinite(months) ? months.toFixed(1) + " months" : "N/A";
+      } else if (annualLoss <= 0){
+        paybackTxt = "No financial case yet";
+      }
+
+      // UI outputs
+      el("annualOld").textContent  = fmt(annualOld, cur);
+      el("annualNew").textContent  = fmt(annualNewNet, cur);
+      el("annualLoss").textContent = fmt(annualLoss, cur);
+      el("payback").textContent    = paybackTxt;
+
+      // Bottom line message
+      let msg = `Bottom line: based on your actual service reality, staying with the old system costs about `;
+      msg += `<b class="bad">${fmt(annualOld, cur)}</b> per year. `;
+      msg += `With the new system (net of quantified benefits), the annual cost is about `;
+      msg += `<b class="warn">${fmt(annualNewNet, cur)}</b>. `;
+      if (annualLoss > 0){
+        msg += `That means not upgrading is a recurring annual loss of <b class="bad">${fmt(annualLoss, cur)}</b>.`;
+      } else {
+        msg += `At the current inputs, the upgrade case is not financially positive yet.`;
+      }
+      el("bottomLine").innerHTML = msg;
+
+      // Summary text (customer-ready)
+      const lines = [];
+      lines.push(`Upgrade Business Case (Mode: ${mode.toUpperCase()}, Horizon: ${years} years)`);
+      lines.push(`1) Service calls (last 12 months): ${calls}`);
+      lines.push(`2) Avg cost per service event: ${fmt(costEvent, cur)}`);
+      lines.push(`3) Additional downtime cost per year: ${fmt(extraDowntime, cur)}`);
+      if (depOn) lines.push(`4) Current depreciation burden (old system): ${fmt(dep, cur)}`);
+      lines.push(``);
+      lines.push(`Annual cost of staying with the old system: ${fmt(annualOld, cur)}`);
+
+      if (matOn){
+        lines.push(`Raw material spend (annual): ${fmt(matSpend, cur)}`);
+        lines.push(`Material reduction: ${matPct.toFixed(1)}%`);
+        lines.push(`Quantified material savings (annual): ${fmt(annualMaterialSavings, cur)}`);
+      }
+
+      lines.push(``);
+      lines.push(`New system annual cost (incl. service): ${fmt(newAnnual, cur)}`);
+      lines.push(`Net annual cost with new system (after quantified benefits): ${fmt(annualNewNet, cur)}`);
+      lines.push(`Net annual loss if no upgrade: ${fmt(annualLoss, cur)}`);
+      lines.push(`Payback (proxy): ${paybackTxt}`);
+      lines.push(``);
+      lines.push(`Closing line: Not upgrading is the expensive decision when the annual loss is recurring.`);
+      el("summary").value = lines.join("\n");
+    }
+
+    function reset(){
+      el("mode").value = "expected";
+      el("modeLabel").textContent = "Expected";
+      el("currency").value = "$";
+      el("years").value = "3";
+
+      el("calls").value = 12; el("callsR").value = 12;
+      el("costEvent").value = 900; el("costEventR").value = 900;
+      el("extraDowntime").value = 6000; el("extraDowntimeR").value = 6000;
+
+      el("useMaterials").checked = true;
+      el("matSpend").value = 500000; el("matSpendR").value = 500000;
+      el("matPct").value = 0.5; el("matPctR").value = 0.5;
+
+      el("useDep").checked = false;
+      el("dep").value = 25000; el("depR").value = 25000;
+
+      el("newAnnual").value = 45000; el("newAnnualR").value = 45000;
+
+      updateBlocks();
+
+      el("annualOld").textContent = "-";
+      el("annualNew").textContent = "-";
+      el("annualLoss").textContent = "-";
+      el("payback").textContent = "-";
+      el("bottomLine").textContent = "Enter inputs and click Calculate.";
+      el("summary").value = "";
+    }
+
+    el("calcBtn").addEventListener("click", calculate);
+    el("resetBtn").addEventListener("click", reset);
+    el("copyBtn").addEventListener("click", async () => {
+      if (!el("summary").value.trim()) calculate();
+      try{
+        await navigator.clipboard.writeText(el("summary").value);
+        el("copyBtn").textContent = "Copied";
+        setTimeout(()=> el("copyBtn").textContent = "Copy summary", 900);
+      }catch(e){
+        alert("Copy failed. Please copy manually from the summary box.");
+      }
+    });
+    el("printBtn").addEventListener("click", () => window.print());
+
+    // init
+    reset();
+  </script>
+</body>
+</html>
