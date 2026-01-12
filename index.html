@@ -1,583 +1,125 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Operational ROI Upgrade Calculator</title>
-  <style>
-    :root{
-      --bg:#070b16;
-      --card:#0e1730;
-      --card2:#0c142b;
-      --text:#eaf0ff;
-      --muted:#9aa7c3;
-      --line:#243055;
-      --good:#2ee59d;
-      --bad:#ff5a7a;
-      --warn:#ffcc4d;
-      --blue:#60a5fa;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: radial-gradient(900px 500px at 75% 0%, #1b2b5a 0%, var(--bg) 62%);
-      color:var(--text);
-    }
-    .wrap{max-width:1120px;margin:0 auto;padding:18px}
-    h1{margin:0 0 6px;font-size:22px;letter-spacing:.2px}
-    .sub{margin:0 0 14px;color:var(--muted);line-height:1.45}
-    .grid{display:grid;grid-template-columns:1.05fr .95fr;gap:14px;align-items:start}
-    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
-      border:1px solid rgba(255,255,255,.09);
-      border-radius:18px;
-      padding:14px;
-      box-shadow: 0 14px 34px rgba(0,0,0,.30);
-    }
-    .row{display:flex;gap:10px;align-items:center}
-    .topRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:10px}
-    .pill{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:8px 10px;border-radius:999px;
-      background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.08);
-      color:#e5e7eb;font-size:12px
-    }
-    .pill b{color:var(--text)}
-    h2{margin:0 0 10px;font-size:15px;color:#dbeafe}
-    .secTitle{
-      display:flex;justify-content:space-between;align-items:center;
-      margin:10px 0 6px;padding-top:10px;
-      border-top:1px dashed rgba(255,255,255,.12);
-      color:#dbeafe;font-size:13px
-    }
-    .tag{font-size:11px;color:#cfe4ff;border:1px solid rgba(96,165,250,.35);background:rgba(96,165,250,.12);padding:6px 8px;border-radius:999px}
-    .tag.hard{border-color:rgba(46,229,157,.35);background:rgba(46,229,157,.10)}
-    .tag.assume{border-color:rgba(255,204,77,.35);background:rgba(255,204,77,.10);color:#ffe9b0}
-    .field{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
-    .field:last-child{border-bottom:none}
-    label{display:block;font-size:12.5px;color:#dbeafe;margin-bottom:8px}
-    input[type="number"], select, textarea{
-      width:100%;
-      background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-      color:var(--text);
-      border-radius:12px;
-      padding:10px 12px;
-      font-size:14px;
-      outline:none;
-    }
-    input[type="range"]{width:100%}
-    .hint{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.35}
-    .tog{display:flex;align-items:center;gap:10px}
-    .tog input{transform:scale(1.1)}
-    .kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .kpi{
-      padding:12px;border-radius:16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-    }
-    .kpi .t{font-size:12px;color:var(--muted);margin-bottom:6px}
-    .kpi .v{font-size:20px;font-weight:860;letter-spacing:.2px}
-    .good{color:var(--good)}
-    .bad{color:var(--bad)}
-    .warn{color:var(--warn)}
-    .blue{color:var(--blue)}
-    .bigLine{
-      margin-top:10px;
-      padding:12px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(46,229,157,.10);
-      line-height:1.45;
-    }
-    .breakdown{
-      margin-top:10px;
-      padding:12px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-    }
-    .bdRow{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06)}
-    .bdRow:last-child{border-bottom:none}
-    .bdRow span{color:var(--muted);font-size:12px}
-    .bdRow b{font-size:12px}
-    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-    button{
-      border:none;border-radius:14px;
-      padding:12px 14px;
-      font-weight:760;
-      cursor:pointer;
-      color:#071018;
-      background: linear-gradient(135deg, var(--good), var(--blue));
-    }
-    button.secondary{
-      color:var(--text);
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-      font-weight:650;
-    }
-    textarea{min-height:150px;resize:vertical;line-height:1.45}
-    .mini{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.45}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVT | EOL Upgrade Simulator 2026</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        h1 { color: #004a99; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .input-section { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; background: #f9f9f9; padding: 20px; border-radius: 8px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        .results { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .card { padding: 20px; border-radius: 10px; border: 1px solid #eee; position: relative; }
+        .plan-a { border-top: 5px solid #004a99; background: #f0f4f8; }
+        .plan-b { border-top: 5px solid #28a745; background: #f0f9f1; }
+        .card h2 { margin-top: 0; color: #333; font-size: 1.2rem; }
+        .price-tag { font-size: 2rem; font-weight: bold; margin: 15px 0; color: #004a99; }
+        .benefit { background: #fff; padding: 10px; border-radius: 5px; font-size: 0.9rem; margin: 10px 0; border-left: 3px solid #28a745; }
+        .footer-note { font-size: 0.8rem; color: #777; margin-top: 20px; text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
+        th, td { text-align: left; padding: 8px; border-bottom: 1px solid #ddd; }
+    </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>Operational ROI Upgrade Calculator</h1>
-    <p class="sub">
-      Built to sell upgrades from legacy systems using actual loss. Separates hard data from assumptions, shows a range, and outputs CFO-ready numbers.
-    </p>
 
-    <div class="grid">
-      <!-- Inputs -->
-      <div class="card">
-        <div class="topRow">
-          <span class="pill">Currency:
-            <select id="currency" style="width:auto;padding:8px 10px">
-              <option value="$">$</option>
-              <option value="€">€</option>
-              <option value="₪">₪</option>
+<div class="container">
+    <h1>AVT EOL Upgrade Simulator</h1>
+    
+    <div class="input-section">
+        <div>
+            <label>Select Region</label>
+            <select id="region" onchange="calculate()">
+                <option value="0.09">USA (9% Interest Rate)</option>
+                <option value="0.05">Europe (5% Interest Rate)</option>
+                <option value="0.07">Rest of World (7% Interest Rate)</option>
             </select>
-          </span>
-          <span class="pill">Scenario:
-            <select id="scenario" style="width:auto;padding:8px 10px">
-              <option value="conservative">Conservative</option>
-              <option value="expected" selected>Expected</option>
-              <option value="strong">Strong</option>
-            </select>
-          </span>
-          <span class="pill">Horizon:
-            <select id="years" style="width:auto;padding:8px 10px">
-              <option value="3">3 years</option>
-              <option value="5">5 years</option>
-            </select>
-          </span>
         </div>
-
-        <h2>Inputs</h2>
-
-        <div class="secTitle">
-          <span>1) Maintenance reality (annual)</span>
-          <span class="tag hard">Hard data</span>
+        <div>
+            <label>System List Price ($)</label>
+            <input type="number" id="systemPrice" placeholder="Enter Price (e.g. 70000)" oninput="calculate()">
         </div>
-
-        <div class="field">
-          <label>Service calls per year</label>
-          <div class="row">
-            <input type="range" id="callsR" min="0" max="80" step="1" value="12" />
-            <input type="number" id="calls" min="0" step="1" value="12" />
-          </div>
-          <div class="hint">From service logs. This anchors the conversation.</div>
-        </div>
-
-        <div class="field">
-          <label>Avg. cost per call (technician, travel, parts)</label>
-          <div class="row">
-            <input type="range" id="callCostR" min="0" max="20000" step="50" value="800" />
-            <input type="number" id="callCost" min="0" step="50" value="800" />
-          </div>
-          <div class="hint">Keep it conservative if needed. The call count does most of the work.</div>
-        </div>
-
-        <div class="secTitle">
-          <span>2) Operational downtime</span>
-          <span class="tag hard">Hard data</span>
-        </div>
-
-        <div class="field">
-          <label>Unplanned downtime hours per month</label>
-          <div class="row">
-            <input type="range" id="dtHoursR" min="0" max="80" step="1" value="4" />
-            <input type="number" id="dtHours" min="0" step="1" value="4" />
-          </div>
-          <div class="hint">If you only have annual hours, divide by 12.</div>
-        </div>
-
-        <div class="field">
-          <label>Cost per hour (labor + lost output + overtime)</label>
-          <div class="row">
-            <input type="range" id="costHourR" min="0" max="5000" step="10" value="250" />
-            <input type="number" id="costHour" min="0" step="10" value="250" />
-          </div>
-          <div class="hint">This is the fastest way to make downtime real in money.</div>
-        </div>
-
-        <div class="secTitle">
-          <span>3) Materials and waste (major cost lever)</span>
-          <span class="tag assume">Assumption</span>
-        </div>
-
-        <div class="field">
-          <label class="tog"><input type="checkbox" id="useMaterials" checked /> Include material savings</label>
-          <div class="hint">When materials are the biggest cost, even 0.5 percent is meaningful.</div>
-        </div>
-
-        <div class="field" id="matBlock1">
-          <label>Annual material spend (paper, substrates, ink, consumables)</label>
-          <div class="row">
-            <input type="range" id="matSpendR" min="0" max="20000000" step="10000" value="12000000" />
-            <input type="number" id="matSpend" min="0" step="1000" value="12000000" />
-          </div>
-        </div>
-
-        <div class="field" id="matBlock2">
-          <label>Conservative reduction (%) with new system</label>
-          <div class="row">
-            <input type="range" id="matPctR" min="0" max="5" step="0.1" value="0.5" />
-            <input type="number" id="matPct" min="0" step="0.1" value="0.5" />
-          </div>
-          <div class="hint">Suggested range: 0.3 to 1.0 percent. Keep it defensible.</div>
-        </div>
-
-        <div class="secTitle">
-          <span>4) Risk cost (optional)</span>
-          <span class="tag assume">Assumption</span>
-        </div>
-
-        <div class="field">
-          <label class="tog"><input type="checkbox" id="useRisk" /> Include expected cost of a major failure</label>
-          <div class="hint">Not fear. Expected value. If they disagree, leave it off.</div>
-        </div>
-
-        <div class="field" id="riskBlock" style="display:none">
-          <label>Probability per year (%)</label>
-          <div class="row">
-            <input type="range" id="riskProbR" min="0" max="100" step="1" value="25" />
-            <input type="number" id="riskProb" min="0" max="100" step="1" value="25" />
-          </div>
-          <div class="hint">Example: 25 percent chance of one major failure in a year.</div>
-        </div>
-
-        <div class="field" id="riskBlock2" style="display:none">
-          <label>Impact cost if it happens (downtime, parts, lost orders)</label>
-          <div class="row">
-            <input type="range" id="riskImpactR" min="0" max="1000000" step="1000" value="50000" />
-            <input type="number" id="riskImpact" min="0" step="1000" value="50000" />
-          </div>
-        </div>
-
-        <div class="secTitle">
-          <span>5) New solution investment</span>
-          <span class="tag hard">Hard data</span>
-        </div>
-
-        <div class="field">
-          <label>Investment type</label>
-          <select id="investType">
-            <option value="capex" selected>Total upgrade cost (CAPEX)</option>
-            <option value="opex">Annual cost (lease, subscription)</option>
-          </select>
-          <div class="hint">CAPEX gives real payback months. OPEX gives direct annual comparison.</div>
-        </div>
-
-        <div class="field" id="capexBlock">
-          <label>Total cost of new system (after trade-in, discounts)</label>
-          <div class="row">
-            <input type="range" id="newTotalR" min="0" max="2000000" step="1000" value="120000" />
-            <input type="number" id="newTotal" min="0" step="1000" value="120000" />
-          </div>
-        </div>
-
-        <div class="field" id="lifeBlock">
-          <label>Lifespan for annualizing (years)</label>
-          <div class="row">
-            <input type="range" id="lifeR" min="1" max="10" step="1" value="5" />
-            <input type="number" id="life" min="1" step="1" value="5" />
-          </div>
-          <div class="hint">Used to translate CAPEX into an annualized number for CFO framing.</div>
-        </div>
-
-        <div class="field" id="opexBlock" style="display:none">
-          <label>Annual cost of new system (including service)</label>
-          <div class="row">
-            <input type="range" id="newAnnualR" min="0" max="1000000" step="500" value="24000" />
-            <input type="number" id="newAnnual" min="0" step="500" value="24000" />
-          </div>
-        </div>
-
-        <div class="actions">
-          <button id="calcBtn">Calculate</button>
-          <button class="secondary" id="resetBtn">Reset</button>
-          <button class="secondary" id="copyBtn">Copy summary</button>
-          <button class="secondary" id="printBtn">Print</button>
-        </div>
-
-        <div class="mini">
-          Sales rule: If there is no measurable loss, there is no urgency. Start with hard data, then add assumptions only if the customer agrees.
-        </div>
-      </div>
-
-      <!-- Outputs -->
-      <div class="card">
-        <h2>Results</h2>
-
-        <div class="kpis">
-          <div class="kpi">
-            <div class="t">Current bleeding (annual)</div>
-            <div class="v bad" id="bleedAnnual">-</div>
-          </div>
-          <div class="kpi">
-            <div class="t">New system (annualized)</div>
-            <div class="v blue" id="newAnnualized">-</div>
-          </div>
-          <div class="kpi">
-            <div class="t">Cost of inaction (annual)</div>
-            <div class="v bad" id="inaction">-</div>
-          </div>
-          <div class="kpi">
-            <div class="t">Payback (months)</div>
-            <div class="v good" id="payback">-</div>
-          </div>
-        </div>
-
-        <div class="bigLine" id="bottomLine">Enter inputs and click Calculate.</div>
-
-        <div class="breakdown">
-          <div class="bdRow"><span>Service cost (annual)</span><b id="bdService">-</b></div>
-          <div class="bdRow"><span>Downtime cost (annual)</span><b id="bdDowntime">-</b></div>
-          <div class="bdRow"><span>Material savings (annual)</span><b id="bdMaterials">-</b></div>
-          <div class="bdRow"><span>Expected risk cost (annual)</span><b id="bdRisk">-</b></div>
-          <div class="bdRow"><span>Net annual savings vs annualized new</span><b id="bdNet">-</b></div>
-        </div>
-
-        <div style="margin-top:12px">
-          <label style="display:block;margin:0 0 8px;color:#dbeafe;font-size:13px">Customer-ready summary</label>
-          <textarea id="summary" readonly></textarea>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <script>
-    const $ = (id) => document.getElementById(id);
+    <div class="results" id="resultsArea" style="display:none;">
+        <div class="card plan-a">
+            <h2>Plan A: The Flat Saver</h2>
+            <div class="benefit">🛡️ Includes Trade-In Credit ($10k)</div>
+            <div class="benefit">✨ 50% OFF Service (Years 2-3)</div>
+            <div class="price-tag" id="planAMonthly">$0</div>
+            <p><strong>Fixed monthly payment for 36 months</strong></p>
+            <table>
+                <tr><th>Year</th><th>Payment/Mo</th><th>Service Cost</th></tr>
+                <tr><td>Year 1</td><td id="a_y1_pay"></td><td>Warranty</td></tr>
+                <tr><td>Year 2</td><td id="a_y2_pay"></td><td>50% OFF</td></tr>
+                <tr><td>Year 3</td><td id="a_y3_pay"></td><td>50% OFF</td></tr>
+            </table>
+        </div>
 
-    const fmt = (n, cur) => {
-      if (!isFinite(n)) return "-";
-      const sign = n < 0 ? "-" : "";
-      const abs = Math.abs(n);
-      return sign + cur + abs.toLocaleString(undefined, { maximumFractionDigits: 0 });
-    };
+        <div class="card plan-b">
+            <h2>Plan B: Cash-Flow Relief</h2>
+            <div class="benefit">🛟 Lowest Entry Point in 2026</div>
+            <div class="benefit">🎁 100% FREE Service (Year 2)</div>
+            <div class="price-tag" id="planBYear1">$0</div>
+            <p><strong>Ramp-up model: Start low, grow later</strong></p>
+            <table>
+                <tr><th>Year</th><th>Payment/Mo</th><th>Service Cost</th></tr>
+                <tr><td>Year 1</td><td id="b_y1_pay" style="color:#28a745; font-weight:bold;"></td><td>Warranty</td></tr>
+                <tr><td>Year 2</td><td id="b_y2_pay"></td><td style="color:#28a745; font-weight:bold;">FREE</td></tr>
+                <tr><td>Year 3</td><td id="b_y3_pay"></td><td>Full Price</td></tr>
+            </table>
+        </div>
+    </div>
 
-    // Scenario multipliers apply ONLY to assumptions (materials and risk), not to hard data.
-    const scenarioFactor = {
-      conservative: { assume: 0.8 },
-      expected: { assume: 1.0 },
-      strong: { assume: 1.2 }
-    };
+    <div class="footer-note">
+        * Estimates based on 2026 Global Service Policy. Final quotes require Finance (Hagar) approval.
+    </div>
+</div>
 
-    function sync(rangeId, numId){
-      const r = $(rangeId), n = $(numId);
-      r.addEventListener("input", () => n.value = r.value);
-      n.addEventListener("input", () => r.value = n.value || 0);
+<script>
+function calculate() {
+    const systemPrice = parseFloat(document.getElementById('systemPrice').value);
+    const rate = parseFloat(document.getElementById('region').value) / 12;
+    const months = 36;
+    const serviceYearCost = 7000; // Standard annual service cost
+    const tradeInCredit = 10000;
+
+    if (!systemPrice || systemPrice <= 0) {
+        document.getElementById('resultsArea').style.display = 'none';
+        return;
     }
+    document.getElementById('resultsArea').style.display = 'grid';
 
-    sync("callsR","calls");
-    sync("callCostR","callCost");
-    sync("dtHoursR","dtHours");
-    sync("costHourR","costHour");
-    sync("matSpendR","matSpend");
-    sync("matPctR","matPct");
-    sync("riskProbR","riskProb");
-    sync("riskImpactR","riskImpact");
-    sync("newTotalR","newTotal");
-    sync("lifeR","life");
-    sync("newAnnualR","newAnnual");
+    // PLAN A CALCULATION
+    // Principal = (Price - Credit) + (Service Y2 @ 50%) + (Service Y3 @ 50%)
+    const principalA = (systemPrice - tradeInCredit) + (serviceYearCost); 
+    const pmtA = (principalA * rate) / (1 - Math.pow(1 + rate, -months));
 
-    function updateBlocks(){
-      const matOn = $("useMaterials").checked;
-      $("matBlock1").style.display = matOn ? "block" : "none";
-      $("matBlock2").style.display = matOn ? "block" : "none";
+    // Update Plan A UI
+    document.getElementById('planAMonthly').innerText = `$${Math.round(pmtA).toLocaleString()}`;
+    document.getElementById('a_y1_pay').innerText = `$${Math.round(pmtA).toLocaleString()}`;
+    document.getElementById('a_y2_pay').innerText = `$${Math.round(pmtA).toLocaleString()}`;
+    document.getElementById('a_y3_pay').innerText = `$${Math.round(pmtA).toLocaleString()}`;
 
-      const riskOn = $("useRisk").checked;
-      $("riskBlock").style.display = riskOn ? "block" : "none";
-      $("riskBlock2").style.display = riskOn ? "block" : "none";
+    // PLAN B CALCULATION
+    // Year 1: ~50% of Plan A Monthly
+    const pmtB_Y1 = pmtA * 0.5;
+    
+    // Remaining Balance after Y1 (Simplified interest logic for simulator)
+    const remainingPrincipalB = systemPrice - (pmtB_Y1 * 12 * 0.8); // Adjusting for interest
+    // Year 2 Service is FREE. Year 3 Service is FULL.
+    const principalRemainingB = remainingPrincipalB + serviceYearCost;
+    const pmtB_Y2_3 = (principalRemainingB * rate) / (1 - Math.pow(1 + rate, -24));
 
-      const type = $("investType").value;
-      $("capexBlock").style.display = type === "capex" ? "block" : "none";
-      $("lifeBlock").style.display  = type === "capex" ? "block" : "none";
-      $("opexBlock").style.display  = type === "opex" ? "block" : "none";
-    }
+    // Update Plan B UI
+    document.getElementById('planBYear1').innerText = `$${Math.round(pmtB_Y1).toLocaleString()}`;
+    document.getElementById('b_y1_pay').innerText = `$${Math.round(pmtB_Y1).toLocaleString()}`;
+    document.getElementById('b_y2_pay').innerText = `$${Math.round(pmtB_Y2_3).toLocaleString()}`;
+    document.getElementById('b_y3_pay').innerText = `$${Math.round(pmtB_Y2_3).toLocaleString()}`;
+}
+</script>
 
-    $("useMaterials").addEventListener("change", updateBlocks);
-    $("useRisk").addEventListener("change", updateBlocks);
-    $("investType").addEventListener("change", updateBlocks);
-
-    function calculate(){
-      const cur = $("currency").value;
-      const years = parseInt($("years").value, 10);
-      const sc = $("scenario").value;
-      const factor = (scenarioFactor[sc] || scenarioFactor.expected).assume;
-
-      // Hard data
-      const calls = Math.max(0, parseFloat($("calls").value) || 0);
-      const callCost = Math.max(0, parseFloat($("callCost").value) || 0);
-      const dtHours = Math.max(0, parseFloat($("dtHours").value) || 0);
-      const costHour = Math.max(0, parseFloat($("costHour").value) || 0);
-
-      const serviceAnnual = calls * callCost;
-      const downtimeAnnual = (dtHours * costHour) * 12;
-
-      // Assumptions
-      const matOn = $("useMaterials").checked;
-      const matSpend = matOn ? Math.max(0, parseFloat($("matSpend").value) || 0) : 0;
-      const matPct = matOn ? Math.max(0, parseFloat($("matPct").value) || 0) : 0;
-      const materialsAnnual = matOn ? (matSpend * (matPct / 100)) * factor : 0;
-
-      const riskOn = $("useRisk").checked;
-      const riskProb = riskOn ? Math.max(0, parseFloat($("riskProb").value) || 0) : 0;
-      const riskImpact = riskOn ? Math.max(0, parseFloat($("riskImpact").value) || 0) : 0;
-      const riskAnnual = riskOn ? ((riskProb / 100) * riskImpact) * factor : 0;
-
-      // Current bleeding is hard costs plus expected risk. MaterialsAnnual is modeled as savings with upgrade,
-      // but it represents current waste that can be reduced, so it contributes to the "cost of staying put".
-      const currentBleeding = serviceAnnual + downtimeAnnual + riskAnnual + materialsAnnual;
-
-      // New system annualized
-      const type = $("investType").value;
-      let newAnnualized = 0;
-      let newTotal = 0;
-
-      if (type === "capex"){
-        newTotal = Math.max(0, parseFloat($("newTotal").value) || 0);
-        const life = Math.max(1, parseFloat($("life").value) || 1);
-        newAnnualized = newTotal / life;
-      } else {
-        newAnnualized = Math.max(0, parseFloat($("newAnnual").value) || 0);
-      }
-
-      // Net annual savings using annual framing
-      const netAnnualSavings = currentBleeding - newAnnualized;
-
-      // Cost of inaction is the net annual loss if you do not upgrade
-      const costInaction = netAnnualSavings;
-
-      // Payback months
-      // If CAPEX, use real payback: total / annualSavings
-      // If OPEX, payback is not meaningful. We show "N/A" unless you want to add switching fee later.
-      let paybackTxt = "N/A";
-      if (netAnnualSavings > 0){
-        if (type === "capex"){
-          const months = (newTotal / netAnnualSavings) * 12;
-          paybackTxt = isFinite(months) ? months.toFixed(1) : "N/A";
-        } else {
-          paybackTxt = "Annual model";
-        }
-      } else {
-        paybackTxt = "No case yet";
-      }
-
-      // Update KPI
-      $("bleedAnnual").textContent = fmt(currentBleeding, cur);
-      $("newAnnualized").textContent = fmt(newAnnualized, cur);
-      $("inaction").textContent = fmt(costInaction, cur);
-      $("payback").textContent = paybackTxt;
-
-      // Breakdown
-      $("bdService").textContent = fmt(serviceAnnual, cur);
-      $("bdDowntime").textContent = fmt(downtimeAnnual, cur);
-      $("bdMaterials").textContent = fmt(materialsAnnual, cur);
-      $("bdRisk").textContent = fmt(riskAnnual, cur);
-      $("bdNet").textContent = fmt(netAnnualSavings, cur);
-
-      // Bottom line
-      if (netAnnualSavings > 0){
-        const horizonValue = netAnnualSavings * years;
-        $("bottomLine").innerHTML =
-          `Bottom line: staying with the legacy system costs about <b class="bad">${fmt(currentBleeding, cur)}</b> per year.
-           The new system is about <b class="blue">${fmt(newAnnualized, cur)}</b> per year (annualized).
-           Not upgrading is a recurring annual loss of <b class="bad">${fmt(netAnnualSavings, cur)}</b>.
-           Over ${years} years, that is roughly <b class="bad">${fmt(horizonValue, cur)}</b>.`;
-      } else {
-        $("bottomLine").innerHTML =
-          `At the current inputs, the upgrade case is not financially positive yet.
-           Adjust only if the customer agrees the current loss is understated (downtime, materials, or risk).`;
-      }
-
-      // Summary text
-      const lines = [];
-      lines.push(`Operational ROI Upgrade Summary`);
-      lines.push(`Scenario: ${sc.toUpperCase()}   Horizon: ${years} years`);
-      lines.push(``);
-      lines.push(`HARD DATA`);
-      lines.push(`- Service calls per year: ${calls}`);
-      lines.push(`- Avg cost per call: ${fmt(callCost, cur)}`);
-      lines.push(`- Service cost (annual): ${fmt(serviceAnnual, cur)}`);
-      lines.push(`- Downtime hours per month: ${dtHours}`);
-      lines.push(`- Cost per hour: ${fmt(costHour, cur)}`);
-      lines.push(`- Downtime cost (annual): ${fmt(downtimeAnnual, cur)}`);
-      lines.push(``);
-      lines.push(`ASSUMPTIONS (only if customer agrees)`);
-      lines.push(`- Material savings (annual): ${fmt(materialsAnnual, cur)} (spend ${fmt(matSpend, cur)}, reduction ${matPct}%)`);
-      lines.push(`- Expected risk cost (annual): ${fmt(riskAnnual, cur)} (prob ${riskProb}%, impact ${fmt(riskImpact, cur)})`);
-      lines.push(``);
-      lines.push(`CURRENT BLEEDING (annual): ${fmt(currentBleeding, cur)}`);
-      lines.push(`NEW SYSTEM (annualized): ${fmt(newAnnualized, cur)}`);
-      lines.push(`COST OF INACTION (annual): ${fmt(netAnnualSavings, cur)}`);
-      lines.push(`PAYBACK: ${paybackTxt}`);
-      lines.push(``);
-      lines.push(`Closing line: This is not about spending money. It is about stopping a recurring annual loss.`);
-      $("summary").value = lines.join("\n");
-    }
-
-    function reset(){
-      $("currency").value = "$";
-      $("scenario").value = "expected";
-      $("years").value = "5";
-
-      $("calls").value = 12; $("callsR").value = 12;
-      $("callCost").value = 800; $("callCostR").value = 800;
-
-      $("dtHours").value = 4; $("dtHoursR").value = 4;
-      $("costHour").value = 250; $("costHourR").value = 250;
-
-      $("useMaterials").checked = true;
-      $("matSpend").value = 12000000; $("matSpendR").value = 12000000;
-      $("matPct").value = 0.5; $("matPctR").value = 0.5;
-
-      $("useRisk").checked = false;
-      $("riskProb").value = 25; $("riskProbR").value = 25;
-      $("riskImpact").value = 50000; $("riskImpactR").value = 50000;
-
-      $("investType").value = "capex";
-      $("newTotal").value = 120000; $("newTotalR").value = 120000;
-      $("life").value = 5; $("lifeR").value = 5;
-
-      $("newAnnual").value = 24000; $("newAnnualR").value = 24000;
-
-      updateBlocks();
-
-      $("bleedAnnual").textContent = "-";
-      $("newAnnualized").textContent = "-";
-      $("inaction").textContent = "-";
-      $("payback").textContent = "-";
-      $("bottomLine").textContent = "Enter inputs and click Calculate.";
-      $("summary").value = "";
-
-      $("bdService").textContent = "-";
-      $("bdDowntime").textContent = "-";
-      $("bdMaterials").textContent = "-";
-      $("bdRisk").textContent = "-";
-      $("bdNet").textContent = "-";
-    }
-
-    $("calcBtn").addEventListener("click", calculate);
-    $("resetBtn").addEventListener("click", reset);
-    $("copyBtn").addEventListener("click", async () => {
-      if (!$("summary").value.trim()) calculate();
-      try{
-        await navigator.clipboard.writeText($("summary").value);
-        $("copyBtn").textContent = "Copied";
-        setTimeout(()=> $("copyBtn").textContent = "Copy summary", 900);
-      }catch(e){
-        alert("Copy failed. Please copy manually from the summary box.");
-      }
-    });
-    $("printBtn").addEventListener("click", () => window.print());
-
-    updateBlocks();
-    reset();
-  </script>
 </body>
 </html>
