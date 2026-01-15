@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AVT | Strategic EOL Simulator 4.0</title>
+    <title>AVT | Strategic EOL Simulator 5.0</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 20px; }
         .container { max-width: 1000px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
@@ -15,21 +15,22 @@
         .toggle-group button { flex: 1; border: none; padding: 10px; cursor: pointer; border-radius: 4px; font-weight: bold; transition: 0.3s; }
         .toggle-group button.active { background: #004a99; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .results { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-        .card { padding: 25px; border-radius: 12px; border: 1px solid #e0e0e0; transition: transform 0.2s; }
+        .card { padding: 25px; border-radius: 12px; border: 1px solid #e0e0e0; transition: transform 0.2s; position: relative; }
         .plan-a { border-top: 6px solid #004a99; background: #fdfdfd; }
         .plan-b { border-top: 6px solid #28a745; background: #f7fff8; }
         .price-tag { font-size: 2.2rem; font-weight: bold; margin: 15px 0; color: #004a99; }
-        .benefit { background: #fff; padding: 10px; border-radius: 6px; font-size: 0.9rem; margin: 8px 0; border-left: 4px solid #28a745; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .benefit { background: #fff; padding: 10px; border-radius: 6px; font-size: 0.85rem; margin: 8px 0; border-left: 4px solid #28a745; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; background: white; }
         th, td { text-align: left; padding: 10px; border-bottom: 1px solid #eee; }
         th { background: #f8f9fa; color: #555; }
+        .highlight-text { color: #28a745; font-weight: bold; }
         .footer-note { font-size: 0.8rem; color: #888; margin-top: 30px; text-align: center; line-height: 1.5; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>AVT EOL Upgrade Simulator</h1>
+    <h1>AVT EOL Upgrade Simulator 5.0</h1>
     
     <div class="input-section">
         <div>
@@ -45,8 +46,6 @@
                 <option value="0.0300">China (PBOC) - 3.00%</option>
                 <option value="0.1500">Brazil (BCB) - 15.00%</option>
                 <option value="0.0075">Japan (BOJ) - 0.75%</option>
-                <option value="0.0000">Switzerland (SNB) - 0.00%</option>
-                <option value="0.1600">Russia (CBR) - 16.00%</option>
             </select>
         </div>
         <div>
@@ -70,27 +69,28 @@
             <div class="price-tag" id="planAMonthly">$0</div>
             <p><strong>Fixed monthly rate</strong></p>
             <table>
-                <thead><tr><th>Year</th><th>Payment/Mo</th><th>Service Cost</th></tr></thead>
+                <thead><tr><th>Year</th><th>Payment/Mo</th><th>Service</th></tr></thead>
                 <tbody id="bodyA"></tbody>
             </table>
         </div>
 
         <div class="card plan-b">
             <h2>Plan B: Cash-Flow Relief</h2>
-            <div class="benefit">🛟 Lowest Entry Point in 2026</div>
+            <div class="benefit">🛟 ~50% Entry Payment in 2026</div>
             <div class="benefit">🎁 100% FREE Service (Year 2)</div>
+            <div class="benefit">📉 25% OFF Service (Year 3)</div>
             <div class="price-tag" id="planBYear1">$0</div>
-            <p><strong>Ramp-up model: Start low, grow later</strong></p>
+            <p><strong>Step-up model: Budget Bridge</strong></p>
             <table>
-                <thead><tr><th>Year</th><th>Payment/Mo</th><th>Service Cost</th></tr></thead>
+                <thead><tr><th>Year</th><th>Payment/Mo</th><th>Service</th></tr></thead>
                 <tbody id="bodyB"></tbody>
             </table>
         </div>
     </div>
 
     <div class="footer-note">
-        * Calculations based on current market rates. Final quotes require Finance (Hagar) approval.<br>
-        * Assumes 2% risk premium for credit insurance and BDI processing.
+        * Based on official market rates. Final quotes require Finance approval.<br>
+        * Incentive: Priority installation slots guaranteed for Q2 2026 requests.
     </div>
 </div>
 
@@ -107,49 +107,55 @@ function setDuration(m) {
 function calculate() {
     const systemPrice = parseFloat(document.getElementById('systemPrice').value);
     const baseRate = parseFloat(document.getElementById('bankRate').value);
-    const riskPremium = 0.02; // AVT risk margin
+    const riskPremium = 0.02; 
     const rate = (baseRate + riskPremium) / 12;
     const serviceYearCost = 7500; 
     const tradeInCredit = 10000;
 
-    if (!systemPrice || systemPrice <= 0) {
-        document.getElementById('resultsArea').style.display = 'none';
-        return;
-    }
-    document.getElementById('resultsArea').style.display = 'grid';
+    if (!systemPrice || systemPrice <= 0) return;
 
-    // PLAN A: Principal = Price - Credit + Discounted Service (50% for remaining years)
+    // PLAN A Calculation
     const serviceYears = (currentMonths / 12) - 1;
     const principalA = (systemPrice - tradeInCredit) + (serviceYears * serviceYearCost * 0.5);
     const pmtA = (principalA * rate) / (1 - Math.pow(1 + rate, -currentMonths));
     document.getElementById('planAMonthly').innerText = `$${Math.round(pmtA).toLocaleString()}`;
 
-    // PLAN B: Year 1 = 50% of Plan A Monthly
-    const pmtB_Y1 = pmtA * 0.5;
-    const paidInY1 = pmtB_Y1 * 12;
-    const principalLeft = systemPrice - (paidInY1 * 0.9); // Adjusted for early reduction
-    const totalServiceCostB = (serviceYears - 1) * serviceYearCost; // Year 2 is FREE
+    // PLAN B Calculation (The Incentive Model)
+    const pmtB_Y1 = pmtA * 0.5; // Start at 50% of Plan A
+    
+    // Summing Service Incentive for B
+    let totalServiceCostB = 0;
+    if (currentMonths >= 24) totalServiceCostB += 0; // Year 2 FREE
+    if (currentMonths >= 36) totalServiceCostB += (serviceYearCost * 0.75); // Year 3 @ 25% OFF
+    if (currentMonths > 36) {
+        totalServiceCostB += ((currentMonths / 12) - 3) * serviceYearCost; // Years 4-5 Full Price
+    }
+
+    const principalRemaining = systemPrice - (pmtB_Y1 * 12);
     const remainingMonths = currentMonths - 12;
-    const pmtB_Rest = ((principalLeft + totalServiceCostB) * rate) / (1 - Math.pow(1 + rate, -remainingMonths));
+    const pmtB_Rest = ((principalRemaining + totalServiceCostB) * rate) / (1 - Math.pow(1 + rate, -remainingMonths));
     document.getElementById('planBYear1').innerText = `$${Math.round(pmtB_Y1).toLocaleString()}`;
 
-    // Update Plan A Table (Explicit years)
+    // Update Tables
+    updateTables(pmtA, pmtB_Y1, pmtB_Rest);
+}
+
+function updateTables(pmtA, pmtB_Y1, pmtB_Rest) {
     let bodyA = `<tr><td>Year 1</td><td>$${Math.round(pmtA).toLocaleString()}</td><td>Warranty</td></tr>`;
     for(let i=2; i <= (currentMonths/12); i++) {
         bodyA += `<tr><td>Year ${i}</td><td>$${Math.round(pmtA).toLocaleString()}</td><td>50% OFF</td></tr>`;
     }
     document.getElementById('bodyA').innerHTML = bodyA;
 
-    // Update Plan B Table (Explicit years)
-    let bodyB = `<tr><td>Year 1</td><td style="color:#28a745; font-weight:bold;">$${Math.round(pmtB_Y1).toLocaleString()}</td><td>Warranty</td></tr>`;
-    bodyB += `<tr><td>Year 2</td><td>$${Math.round(pmtB_Rest).toLocaleString()}</td><td style="color:#28a745; font-weight:bold;">FREE</td></tr>`;
-    for(let i=3; i <= (currentMonths/12); i++) {
+    let bodyB = `<tr><td>Year 1</td><td class="highlight-text">$${Math.round(pmtB_Y1).toLocaleString()}</td><td>Warranty</td></tr>`;
+    bodyB += `<tr><td>Year 2</td><td>$${Math.round(pmtB_Rest).toLocaleString()}</td><td class="highlight-text">100% FREE</td></tr>`;
+    bodyB += `<tr><td>Year 3</td><td>$${Math.round(pmtB_Rest).toLocaleString()}</td><td class="highlight-text">25% OFF</td></tr>`;
+    for(let i=4; i <= (currentMonths/12); i++) {
         bodyB += `<tr><td>Year ${i}</td><td>$${Math.round(pmtB_Rest).toLocaleString()}</td><td>Full Price</td></tr>`;
     }
     document.getElementById('bodyB').innerHTML = bodyB;
 }
 
-// Initial Run
 calculate();
 </script>
 
