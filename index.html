@@ -1,56 +1,52 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AVT | Strategic Upgrade Simulator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --avt-blue: #004a99;
             --avt-green: #28a745;
-            --avt-light-bg: #f8f9fa;
-            --border-color: #dee2e6;
+            --bg-gray: #f4f7f9;
+            --card-shadow: 0 10px 30px rgba(0,0,0,0.08);
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg-gray);
             margin: 0;
-            padding: 20px;
-            color: #333;
+            padding: 40px 20px;
+            color: #2d3436;
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1100px;
             margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
 
         .header {
             text-align: center;
-            border-bottom: 2px solid var(--avt-blue);
-            margin-bottom: 25px;
-            padding-bottom: 15px;
+            margin-bottom: 40px;
         }
 
         .header h1 {
             color: var(--avt-blue);
-            margin: 0;
-            font-size: 28px;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
         }
 
-        /* Input Grid */
-        .input-section {
+        /* Input Panel */
+        .input-panel {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
-            background: var(--avt-light-bg);
-            padding: 20px;
-            border-radius: 8px;
             margin-bottom: 30px;
         }
 
@@ -60,111 +56,121 @@
         }
 
         .input-group label {
+            font-size: 13px;
             font-weight: 600;
+            color: #636e72;
             margin-bottom: 8px;
-            font-size: 14px;
         }
 
         .input-group input, .input-group select {
+            padding: 12px;
+            border: 1px solid #dfe6e9;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus { border-color: var(--avt-blue); }
+
+        .promo-box {
+            grid-column: span 3;
+            background: #fff5f5;
+            border: 1px dashed #fab1a0;
             padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 5px;
-            font-size: 16px;
-        }
-
-        /* Cards Layout */
-        .plans-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-        }
-
-        .card {
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
-            position: relative;
-            transition: transform 0.2s;
-        }
-
-        .card.plan-a { border-top: 8px solid var(--avt-blue); }
-        .card.plan-b { border-top: 8px solid var(--avt-green); }
-
-        .badge {
-            position: absolute;
-            top: -15px;
-            right: 20px;
-            background: white;
-            padding: 2px 12px;
-            border-radius: 20px;
-            font-size: 12px;
+            text-align: center;
+            border-radius: 8px;
+            color: #d63031;
             font-weight: 700;
-            text-transform: uppercase;
-            border: 1px solid #ccc;
-        }
-
-        h2 { margin-top: 10px; font-size: 22px; }
-
-        .price-display {
-            font-size: 36px;
-            font-weight: 700;
-            margin: 15px 0;
-            color: var(--avt-blue);
-        }
-
-        .plan-b .price-display { color: var(--avt-green); }
-
-        .features {
-            list-style: none;
-            padding: 0;
-            margin-bottom: 20px;
-        }
-
-        .features li {
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
             font-size: 14px;
         }
 
-        .features li::before {
-            content: "✓ ";
-            color: var(--avt-green);
-            font-weight: bold;
+        /* Plans Grid */
+        .plans-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
         }
 
-        /* Tabs for Plan B */
-        .tabs {
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+            border-top: 8px solid;
             display: flex;
-            gap: 5px;
-            margin-bottom: 15px;
+            flex-direction: column;
         }
 
-        .tab {
+        .card.plan-a { border-color: var(--avt-blue); }
+        .card.plan-b { border-color: var(--avt-green); }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .plan-a .badge { background: #eef2ff; color: var(--avt-blue); }
+        .plan-b .badge { background: #e6fffa; color: var(--avt-green); }
+
+        h2 { margin: 0 0 10px 0; font-size: 24px; font-weight: 700; }
+
+        .price-section { margin: 20px 0; }
+        .price-label { font-size: 14px; color: #636e72; }
+        .price-value { font-size: 42px; font-weight: 800; margin: 5px 0; }
+        .plan-a .price-value { color: var(--avt-blue); }
+        .plan-b .price-value { color: var(--avt-green); }
+
+        /* Term Toggles */
+        .term-selector {
+            display: flex;
+            background: #f1f2f6;
+            padding: 4px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .term-btn {
             flex: 1;
             padding: 8px;
-            text-align: center;
-            background: #eee;
+            border: none;
+            background: none;
             cursor: pointer;
-            border-radius: 5px;
+            font-weight: 700;
             font-size: 13px;
-            font-weight: 600;
+            border-radius: 6px;
+            transition: all 0.2s;
         }
 
-        .tab.active {
-            background: var(--avt-green);
-            color: white;
+        .term-btn.active {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            color: var(--avt-green);
         }
 
-        .footer-note {
-            margin-top: 25px;
-            font-size: 12px;
-            color: #666;
-            text-align: center;
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: auto;
+            font-size: 13px;
         }
 
-        @media (max-width: 768px) {
-            .plans-grid { grid-template-columns: 1fr; }
-        }
+        th { text-align: left; color: #b2bec3; font-weight: 600; padding: 10px 0; border-bottom: 1px solid #f1f2f6; }
+        td { padding: 12px 0; border-bottom: 1px solid #f1f2f6; }
+        .val-col { text-align: right; font-weight: 700; }
+        .free-text { color: var(--avt-green); }
+
+        .features { list-style: none; padding: 0; margin: 0 0 20px 0; font-size: 14px; }
+        .features li { margin-bottom: 8px; }
+        .features li::before { content: '✓ '; color: var(--avt-green); font-weight: bold; }
+
+        @media (max-width: 800px) { .plans-grid, .input-panel { grid-template-columns: 1fr; } .promo-box { grid-column: 1; } }
     </style>
 </head>
 <body>
@@ -174,120 +180,160 @@
         <h1>AVT | Strategic Upgrade Simulator</h1>
     </div>
 
-    <div class="input-section">
+    <div class="input-panel">
+        <div class="input-group">
+            <label>Currency & Region Rate</label>
+            <select id="regionRate" onchange="calculate()">
+                <option value="0.0215">Europe (ECB) - 2.15%</option>
+                <option value="0.0350">Americas (Fed) - 3.50%</option>
+                <option value="0.0150">APAC Regional - 1.50%</option>
+                <option value="0.0425">Emerging Markets - 4.25%</option>
+            </select>
+        </div>
         <div class="input-group">
             <label>Base System Price ($)</label>
             <input type="number" id="basePrice" value="70000" oninput="calculate()">
         </div>
         <div class="input-group">
-            <label>Trade-In Credit ($)</label>
+            <label>Trade-In / Buy-back Credit ($)</label>
             <input type="number" id="tradeIn" value="20000" oninput="calculate()">
         </div>
         <div class="input-group">
-            <label>S&I (Ship & Install) ($)</label>
+            <label>S&I (Shipping & Install) ($)</label>
             <input type="number" id="siCost" value="15000" oninput="calculate()">
         </div>
         <div class="input-group">
             <label>Annual Service Cost ($)</label>
             <input type="number" id="serviceCost" value="7500" oninput="calculate()">
         </div>
+        <div class="input-group">
+            <label>Executive Promo</label>
+            <input type="text" value="Plan A: EXTRA 5% OFF HW" disabled style="background:#f8f9fa; color:#d63031; font-weight:700;">
+        </div>
+        <div class="promo-box">
+            * Strategic Note: Service discounts are applied to prepaid contracts in Plan A and fixed installments in Plan B.
+        </div>
     </div>
 
     <div class="plans-grid">
         <div class="card plan-a">
-            <div class="badge">Executive Cash Option</div>
+            <span class="badge">Executive Cash Option</span>
             <h2>Plan A: Strategic Investment</h2>
             <ul class="features">
-                <li>Includes 5% Loyalty Discount on HW</li>
+                <li>Includes 5% Loyalty Discount on Hardware</li>
                 <li>Full Trade-In Credit Applied</li>
-                <li>50% OFF Service (Year 2 & 3)</li>
+                <li>50% OFF Service Contracts (Year 2-3)</li>
             </ul>
-            <div class="price-display" id="planATotal">$0</div>
-            <p style="font-size: 13px; color: #d9534f;">* Includes extra loyalty savings.</p>
+            <div class="price-section">
+                <div class="price-label">Total Upfront Investment</div>
+                <div class="price-value" id="planATotal">$0</div>
+            </div>
+            <table>
+                <thead><tr><th>Year</th><th>Service Status</th><th class="val-col">Est. Cost</th></tr></thead>
+                <tbody id="tableA">
+                    <tr><td>Year 1</td><td>Full Warranty</td><td class="val-col">Included</td></tr>
+                    <tr><td>Year 2</td><td>50% OFF</td><td class="val-col" id="valA2">$0</td></tr>
+                    <tr><td>Year 3</td><td>50% OFF</td><td class="val-col" id="valA3">$0</td></tr>
+                </tbody>
+            </table>
         </div>
 
         <div class="card plan-b">
-            <div class="badge">Financial Bridge Option</div>
+            <span class="badge">Bridge Option</span>
             <h2>Plan B: Cash-Flow Protection</h2>
             
-            <div class="tabs">
-                <div class="tab active" id="tab36" onclick="setTerm(36)">36 Months</div>
-                <div class="tab" id="tab60" onclick="setTerm(60)">60 Months</div>
+            <div class="term-selector">
+                <button class="term-btn active" id="btn36" onclick="setTerm(36)">36 Months</button>
+                <button class="term-btn" id="btn60" onclick="setTerm(60)">60 Months</button>
             </div>
 
             <ul class="features">
-                <li id="bFeature1">No Budget Required for 2026 Cycle</li>
+                <li>No Budget Required for 2026 Cycle</li>
                 <li>Year 2 Service: 100% FREE</li>
                 <li id="bFeature3">Year 3 Service: 25% OFF</li>
             </ul>
-            <div class="price-display" id="planBMonthly">$0/mo</div>
-            <p style="font-size: 13px;">* Fixed monthly installment (includes Service).</p>
+            <div class="price-section">
+                <div class="price-label">Fixed Monthly Payment</div>
+                <div class="price-value" id="planBMonthly">$0/mo</div>
+            </div>
+            <table>
+                <thead><tr><th>Timeline</th><th>Status</th><th class="val-col">Value</th></tr></thead>
+                <tbody id="tableB">
+                    <tr><td>Year 1</td><td>Installment</td><td class="val-col">Warranty Incl.</td></tr>
+                    <tr><td>Year 2</td><td>Installment</td><td class="val-col free-text">FREE Service</td></tr>
+                    <tr><td>Year 3</td><td>Installment</td><td class="val-col" id="valB3">25% OFF Service</td></tr>
+                </tbody>
+            </table>
         </div>
-    </div>
-
-    <div class="footer-note">
-        * Plan B Rate: 2.15% Market + 2.0% Risk Premium. | Service discounts applicable to prepaid installments.
     </div>
 </div>
 
 <script>
     let currentTerm = 36;
-    const marketRate = 0.0215;
-    const riskPremium = 0.02;
-    const annualRate = marketRate + riskPremium;
+    const riskPremium = 0.02; // 2.0% Fixed Risk Premium
 
     function setTerm(n) {
         currentTerm = n;
-        document.getElementById('tab36').classList.toggle('active', n === 36);
-        document.getElementById('tab60').classList.toggle('active', n === 60);
+        document.getElementById('btn36').classList.toggle('active', n === 36);
+        document.getElementById('btn60').classList.toggle('active', n === 60);
         
-        // Update labels for 60m
+        const tableB = document.getElementById('tableB');
         if (n === 60) {
             document.getElementById('bFeature3').innerText = "Years 3-5 Service: 25% OFF";
+            tableB.innerHTML = `
+                <tr><td>Year 1</td><td>Installment</td><td class="val-col">Warranty Incl.</td></tr>
+                <tr><td>Year 2</td><td>Installment</td><td class="val-col free-text">FREE Service</td></tr>
+                <tr><td>Years 3-5</td><td>Installment</td><td class="val-col">25% OFF Service</td></tr>
+            `;
         } else {
             document.getElementById('bFeature3').innerText = "Year 3 Service: 25% OFF";
+            tableB.innerHTML = `
+                <tr><td>Year 1</td><td>Installment</td><td class="val-col">Warranty Incl.</td></tr>
+                <tr><td>Year 2</td><td>Installment</td><td class="val-col free-text">FREE Service</td></tr>
+                <tr><td>Year 3</td><td>Installment</td><td class="val-col">25% OFF Service</td></tr>
+            `;
         }
-        
         calculate();
     }
 
     function calculate() {
-        // Inputs
+        const regionRate = parseFloat(document.getElementById('regionRate').value);
         const base = parseFloat(document.getElementById('basePrice').value) || 0;
         const trade = parseFloat(document.getElementById('tradeIn').value) || 0;
         const si = parseFloat(document.getElementById('siCost').value) || 0;
         const service = parseFloat(document.getElementById('serviceCost').value) || 0;
 
         // Plan A Calculation
-        // HW Discount = 5% of (Base - Trade)
-        const hwCost = (base - trade) * 0.95;
-        const planATotal = hwCost + si;
-        document.getElementById('planATotal').innerText = "$" + Math.round(planATotal).toLocaleString();
+        // HW = (Base - Trade) * 0.95 (5% Loyalty Discount)
+        const hwNet = (base - trade) * 0.95;
+        const totalA = hwNet + si;
+        document.getElementById('planATotal').innerText = "$" + Math.round(totalA).toLocaleString();
+        document.getElementById('valA2').innerText = "$" + Math.round(service * 0.5).toLocaleString();
+        document.getElementById('valA3').innerText = "$" + Math.round(service * 0.5).toLocaleString();
 
         // Plan B Calculation (Amortization)
         // Principle = (Base - Trade + SI) + Budgeted Service
         const hwPrinciple = (base - trade + si);
-        
         let servicePrinciple = 0;
         if (currentTerm === 36) {
-            // Yr 1 (Full), Yr 2 (0), Yr 3 (75%)
-            servicePrinciple = service + (service * 0) + (service * 0.75);
+            // Yr 1 Full, Yr 2 Free, Yr 3 (75% of cost)
+            servicePrinciple = service + 0 + (service * 0.75);
         } else {
-            // Yr 1 (Full), Yr 2 (0), Yr 3-5 (75%)
-            servicePrinciple = service + (service * 0) + (service * 0.75 * 3);
+            // Yr 1 Full, Yr 2 Free, Yrs 3-5 (75% of cost * 3)
+            servicePrinciple = service + 0 + (service * 0.75 * 3);
         }
 
-        const P = hwPrinciple + servicePrinciple;
+        const totalPrinciple = hwPrinciple + servicePrinciple;
+        const annualRate = regionRate + riskPremium;
         const r = annualRate / 12;
         const n = currentTerm;
 
-        // Formula: M = P [ r(1+r)^n / ((1+r)^n - 1) ]
-        const monthly = P * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
-        
+        // Amortization Formula: M = P [ r(1+r)^n / ((1+r)^n - 1) ]
+        const monthly = totalPrinciple * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
         document.getElementById('planBMonthly').innerText = "$" + Math.round(monthly).toLocaleString() + "/mo";
     }
 
-    // Initial run
+    // Initialize
     calculate();
 </script>
 
